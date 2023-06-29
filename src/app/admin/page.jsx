@@ -8,7 +8,7 @@ import React, {
   useReducer,
   useEffect,
 } from "react";
-import PropTypes from "prop-types";
+
 import { usePagination, useTable } from "react-table";
 import { useRouter } from "next/navigation";
 
@@ -16,9 +16,8 @@ import { AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { FaFilter } from "react-icons/fa";
 
-import InputBox from "../../components/input";
-import CheckBoxInput from "../../components/checkboxinput";
-// import dataList from "./data.json";
+import AdminPageLogin from "./admin_login";
+import Filter from "./filter";
 
 const ACTION = {
   UID: "uid",
@@ -30,150 +29,19 @@ const ACTION = {
   SEMESTER: "semester",
   SECTION: "section",
 };
-
-// eslint-disable-next-line react/prop-types
-function AdminPageLogin({ setIsLogin }) {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-
-  return (
-    <main className="bg-primary w-screen h-screen flex flex-col items-center justify-center">
-      <div className="w-1/3 flex flex-col justify-center items-center py-5 bg-secondary rounded-lg shadow-lg">
-        <h1 className="font-bold text-5xl mx-14 text-white">Admin Login</h1>
-        <br />
-        <br />
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (id === "admin" && password === "admin") {
-              setIsLogin(true);
-            } else {
-              alert("ID or Password is incorrect");
-            }
-          }}
-          className="w-[100%] md:w-[80%] h-full flex flex-col justify-between rounded-lg p-5"
-        >
-          <InputBox type="text" placeholder="ID" value={id} setValue={setId} />
-          <InputBox
-            type="password"
-            placeholder="Password"
-            value={password}
-            setValue={setPassword}
-          />
-          <br />
-          <br />
-          <input
-            type="submit"
-            value="Login"
-            className="text-base p-3 bg-tertiary text-white rounded-md w-full cursor-pointer shadow-lg active:shadow-sm"
-          />
-        </form>
-      </div>
-    </main>
-  );
-}
-
-function Filter({ isFilter, filter, dispatch }) {
-  return (
-    <div
-      className={`${
-        isFilter ? "w-full md:w-1/3 p-5" : "w-0 p-0"
-      } transition-all duration-700`}
-    >
-      <h1 className="font-bold  text-3xl  mx-14 text-tertiary">Filter</h1>
-      <div>
-        <InputBox
-          label="UID"
-          type="number"
-          placeholder="Enter UID"
-          value={filter.uid}
-          setValue={dispatch}
-          actionType={ACTION.UID}
-        />
-
-        <InputBox
-          label="Full Name"
-          type="text"
-          placeholder="Enter Name"
-          value={filter.fullname}
-          setValue={dispatch}
-          actionType={ACTION.FULLNAME}
-        />
-
-        <InputBox
-          label="lab no."
-          type="text"
-          placeholder="Enter Lab No."
-          value={filter.labno}
-          setValue={dispatch}
-          actionType={ACTION.LABNO}
-        />
-
-        <InputBox
-          label="pc no."
-          type="number"
-          placeholder="Enter PC No."
-          value={filter.pcno}
-          setValue={dispatch}
-          actionType={ACTION.PCNO}
-        />
-
-        <InputBox
-          label="Subject"
-          type="text"
-          placeholder="Enter Subject"
-          value={filter.subject}
-          setValue={dispatch}
-          actionType={ACTION.SUBJECT}
-        />
-
-        <CheckBoxInput
-          label="Personal Laptop"
-          value={filter.personalLaptop}
-          setValue={dispatch}
-          actionType={ACTION.PERSONALLAPTOP}
-        />
-
-        <InputBox
-          label="Semester"
-          type="text"
-          placeholder="Enter Semester"
-          value={filter.semester}
-          setValue={dispatch}
-          actionType={ACTION.SEMESTER}
-        />
-
-        <InputBox
-          label="Section"
-          type="text"
-          placeholder="Enter Section"
-          value={filter.section}
-          setValue={dispatch}
-          actionType={ACTION.SECTION}
-        />
-      </div>
-    </div>
-  );
-}
-
-Filter.propTypes = {
-  isFilter: PropTypes.bool.isRequired,
-  filter: PropTypes.string.isRequired,
-  dispatch: PropTypes.func.isRequired,
+const initialform = {
+  uid: "",
+  fullname: "",
+  labno: "",
+  pcno: "",
+  personalLaptop: false,
+  subject: "",
+  semester: "",
+  section: "",
 };
 
 function AdminPage() {
   const router = useRouter();
-  const initialform = {
-    uid: "",
-    fullname: "",
-    labno: "",
-    pcno: "",
-    personalLaptop: false,
-    subject: "",
-    semester: "",
-    section: "",
-  };
 
   const columns = useMemo(
     () => [
@@ -248,16 +116,15 @@ function AdminPage() {
   const data = useMemo(() => filteredData, [filteredData]);
 
   async function fetchData() {
-    const result = await fetch("/api/getData", {
+    const result = await fetch("https://freaky-api.vercel.app/LabEntry/getData", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
     const resultData = await result.json();
-    setOriginalData(resultData);
-    setFilteredData(resultData);
-    console.log(resultData);
+    setOriginalData(resultData.data);
+    setFilteredData(resultData.data);
   }
 
   useEffect(() => {
