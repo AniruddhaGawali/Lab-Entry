@@ -18,6 +18,7 @@ import { FaFilter } from "react-icons/fa";
 
 import AdminPageLogin from "./admin_login";
 import Filter from "./filter";
+import Login from "./login";
 
 const ACTION = {
   UID: "uid",
@@ -172,7 +173,7 @@ function AdminPage() {
   } = useTable({ columns, data }, usePagination);
 
   if (!isLogin) {
-    return <AdminPageLogin setIsLogin={setIsLogin} />;
+    return <Login setIsLogin={setIsLogin}/>;
   }
 
   return (
@@ -205,7 +206,7 @@ function AdminPage() {
           </button>
         </div>
       </header>
-      <div className="flex w-4/5 h-3/5 relative overflow-hidden bg-white rounded-lg shadow-lg">
+      <div className="flex w-4/5 h-4/5 relative overflow-hidden bg-white rounded-lg shadow-lg">
         <div
           className={`rounded-lg ${
             isFilter ? "md:w-2/3 w-0" : "w-full"
