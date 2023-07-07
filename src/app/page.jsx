@@ -86,7 +86,10 @@ export default function Home() {
                   if (!formState.uid
                     || !formState.fullname
                     || !formState.labno
-                    || !formState.pcno
+                    || (
+                      !formState.pcno
+                      && !formState.personalLaptop
+                    )
                     || !formState.subject
                     || !formState.semester
                     || !formState.section) {
@@ -94,7 +97,12 @@ export default function Home() {
                     alert("Please fill all the fields");
                     return;
                   }
-                  fetch("/api/register", {
+                  const response = await fetch("https://ipapi.co/json/");
+                  const data = await response.json();
+                  const { ip } = data;
+                  formState.ip = ip;
+                  // fetch("http://localhost:5000/LabEntry/register", {
+                  fetch("https://freaky-api.vercel.app/LabEntry/register", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -103,14 +111,12 @@ export default function Home() {
                   })
                     .then((res) => res.json())
                     .then((data) => {
+                      console.log(data)
                       if (data.message === "success") {
                         setSuccess(true);
                       }
                     });
-                  const response = await fetch("https://ipapi.co/json/");
-                  const data = await response.json();
-                  const { ip } = data;
-                  console.log(formState, ip);
+                  
                 }}
               >
                 <InputBox
