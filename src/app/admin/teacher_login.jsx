@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import InputBox from "../../components/input";
+import { Result } from "postcss";
 
 // eslint-disable-next-line react/prop-types
 export default function TeacherLogin({ setIsLogin }) {
@@ -13,12 +14,25 @@ export default function TeacherLogin({ setIsLogin }) {
         <br />
         <br />
         <form
-          onSubmit={(e) => {
+          onSubmit={ async(e) =>  {
             e.preventDefault();
-            if (id === "admin" && password === "admin") {
-              setIsLogin(true);
-            } else {
-              alert("User or Password is incorrect");
+            let result = await fetch("https://freaky-api.vercel.app/LabEntry/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: id,
+                    password: password,
+                }),
+            });
+
+            result = await result.json();
+            if (result.status === true) {
+                setIsLogin(true);
+            }
+            else{
+                alert("Invalid Credentials");
             }
           }}
           className="w-[100%] md:w-[80%] h-full flex flex-col justify-between rounded-lg p-5"
