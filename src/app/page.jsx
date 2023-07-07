@@ -7,6 +7,7 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import InputBox from "../components/input";
 import CheckBoxInput from "../components/checkboxinput";
 import SuccessfullBox from "../components/successfull";
+import Loading from "@/components/loading";
 
 const ACTION = {
   UID: "uid",
@@ -56,9 +57,13 @@ export default function Home() {
 
   const [formState, dispatch] = useReducer(reducer, initialform);
   const [success, setSuccess] = useState(false);
+  const [isLoading , setIsLoading] = useState(false);
 
   return (
     <main className="bg-primary w-screen h-screen flex items-center justify-center">
+    {
+      isLoading && <Loading/>
+    }
       <Link href="/admin">
         <button
           className="
@@ -74,7 +79,7 @@ export default function Home() {
           <span>Admin</span>
         </button>
       </Link>
-      <div className={`${success ? "w-1/4 h-2/3" : " xl:w-[65%] h-[70%] lg:w-[75%] w-[85%]"} rounded-lg flex transition-all duration-700`}>
+      <div className={` xl:w-[65%] h-[70%] lg:w-[75%] w-[85%] rounded-lg flex transition-all duration-700`}>
         { success
           ? (<SuccessfullBox />)
           : (
@@ -97,12 +102,13 @@ export default function Home() {
                     alert("Please fill all the fields");
                     return;
                   }
+                  setIsLoading(true)
                   const response = await fetch("https://ipapi.co/json/");
                   const data = await response.json();
                   const { ip } = data;
                   formState.ip = ip;
                   // fetch("http://localhost:5000/LabEntry/register", {
-                  fetch("https://freaky-api.vercel.app/LabEntry/register", {
+                  await fetch("https://freaky-api.vercel.app/LabEntry/register", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -115,7 +121,7 @@ export default function Home() {
                         setSuccess(true);
                       }
                     });
-                  
+                  setIsLoading(false)
                 }}
               >
                 <InputBox

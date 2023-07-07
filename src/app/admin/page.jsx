@@ -180,7 +180,7 @@ function AdminPage() {
     <main className="bg-primary w-screen h-screen flex flex-col items-center justify-center">
       <header className="w-4/5 flex justify-between md:m-10 m-5">
         <h1 className="font-bold md:text-5xl text-2xl  mx-14 text-tertiary">
-          Admin Page
+          Student Data
         </h1>
         <div>
           <button
