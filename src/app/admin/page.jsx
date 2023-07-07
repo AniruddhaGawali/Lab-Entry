@@ -16,7 +16,6 @@ import { AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { FaFilter } from "react-icons/fa";
 
-import AdminPageLogin from "./admin_login";
 import Filter from "./filter";
 import Login from "./login";
 
@@ -124,9 +123,19 @@ function AdminPage() {
       },
     });
     const resultData = await result.json();
-    setOriginalData(resultData.data);
-    setFilteredData(resultData.data);
+    let data = resultData.data;
+    data = data.map((d) => {
+      const createdAt = new Date(d.createdAt);
+      
+      return {
+        ...d,
+        createdAt: createdAt.getDate() + "-" + (createdAt.getMonth() + 1) + "-" + createdAt.getFullYear() + " " + createdAt.getHours() + ":" + createdAt.getMinutes() + ":" + createdAt.getSeconds(),
+      };
+    });
+    setOriginalData(data);
+    setFilteredData(data);
   }
+  
 
   useEffect(() => {
     fetchData();
