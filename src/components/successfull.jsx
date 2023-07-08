@@ -7,7 +7,7 @@ function SuccessfullBox() {
       <BsCheckCircleFill className="text-9xl text-green-500" />
       <br />
       <br />
-      <h2 className="text-2xl text-center ">
+      <h2 className="text-2xl text-center p-5 ">
         Your request has been submitted successfully.
       </h2>
     </div>

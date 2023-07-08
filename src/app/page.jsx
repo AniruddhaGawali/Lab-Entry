@@ -7,6 +7,8 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import InputBox from "../components/input";
 import CheckBoxInput from "../components/checkboxinput";
 import SuccessfullBox from "../components/successfull";
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import Loading from "@/components/loading";
 
 const ACTION = {
   UID: "uid",
@@ -42,13 +44,13 @@ export default function Home() {
       case ACTION.PCNO:
         return { ...form, pcno: action.payload };
       case ACTION.PERSONALLAPTOP:
-        return { ...form, personalLaptop: action.payload };
+        return { ...form, personalLaptop: action.payload, pcno: "" };
       case ACTION.SUBJECT:
         return { ...form, subject: action.payload };
       case ACTION.SEMESTER:
         return { ...form, semester: action.payload };
       case ACTION.SECTION:
-        return { ...form, section: action.payload };
+        return { ...form, section: action.payload.split("").splice(-1).toString().toUpperCase() };
       default:
         return form;
     }
@@ -56,9 +58,13 @@ export default function Home() {
 
   const [formState, dispatch] = useReducer(reducer, initialform);
   const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <main className="bg-primary w-screen h-screen flex items-center justify-center">
+      {
+      isLoading && <Loading />
+    }
       <Link href="/admin">
         <button
           className="
@@ -74,7 +80,7 @@ export default function Home() {
           <span>Admin</span>
         </button>
       </Link>
-      <div className={`${success ? "w-1/4 h-2/3" : " xl:w-[65%] h-[70%] lg:w-[75%] w-[85%]"} rounded-lg flex transition-all duration-700`}>
+      <div className={` xl:w-[65%] h-[70%] lg:w-[75%] w-[85%] rounded-lg flex transition-all duration-700`}>
         { success
           ? (<SuccessfullBox />)
           : (
@@ -86,7 +92,10 @@ export default function Home() {
                   if (!formState.uid
                     || !formState.fullname
                     || !formState.labno
-                    || !formState.pcno
+                    || (
+                      !formState.pcno
+                      && !formState.personalLaptop
+                    )
                     || !formState.subject
                     || !formState.semester
                     || !formState.section) {
@@ -94,7 +103,13 @@ export default function Home() {
                     alert("Please fill all the fields");
                     return;
                   }
-                  fetch("/api/register", {
+                  setIsLoading(true);
+                  const response = await fetch("https://ipapi.co/json/");
+                  const ipData = await response.json();
+                  const { ip } = ipData;
+                  formState.ip = ip;
+
+                  await fetch("https://freaky-api.vercel.app/LabEntry/register", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -107,22 +122,20 @@ export default function Home() {
                         setSuccess(true);
                       }
                     });
-                  const response = await fetch("https://ipapi.co/json/");
-                  const data = await response.json();
-                  const { ip } = data;
-                  console.log(formState, ip);
+                  setIsLoading(false);
                 }}
               >
                 <InputBox
-                  placeholder="Pc no."
+                  placeholder="UID"
                   type="number"
-                  value={formState.pcno}
+                  value={formState.uid}
                   setValue={dispatch}
-                  actionType={ACTION.PCNO}
+                  actionType={ACTION.UID}
                 />
-                <CheckBoxInput
-                  label="Personal Laptop"
-                  value={formState.personalLaptop}
+                <InputBox
+                  placeholder="Full Name"
+                  type="text"
+                  value={formState.fullname}
                   setValue={dispatch}
                   actionType={ACTION.FULLNAME}
                 />
@@ -149,13 +162,6 @@ export default function Home() {
                     actionType={ACTION.PERSONALLAPTOP}
                   />
                 </div>
-                <InputBox
-                  placeholder="Subject"
-                  type="text"
-                  value={formState.subject}
-                  setValue={dispatch}
-                  actionType={ACTION.SUBJECT}
-                />
                 <InputBox
                   placeholder="Subject"
                   type="text"
