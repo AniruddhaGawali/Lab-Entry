@@ -7,6 +7,7 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import InputBox from "../components/input";
 import CheckBoxInput from "../components/checkboxinput";
 import SuccessfullBox from "../components/successfull";
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import Loading from "@/components/loading";
 
 const ACTION = {
@@ -43,13 +44,13 @@ export default function Home() {
       case ACTION.PCNO:
         return { ...form, pcno: action.payload };
       case ACTION.PERSONALLAPTOP:
-        return { ...form, personalLaptop: action.payload };
+        return { ...form, personalLaptop: action.payload, pcno: "" };
       case ACTION.SUBJECT:
         return { ...form, subject: action.payload };
       case ACTION.SEMESTER:
         return { ...form, semester: action.payload };
       case ACTION.SECTION:
-        return { ...form, section: action.payload };
+        return { ...form, section: action.payload.split("").splice(-1).toString().toUpperCase() };
       default:
         return form;
     }
@@ -57,12 +58,12 @@ export default function Home() {
 
   const [formState, dispatch] = useReducer(reducer, initialform);
   const [success, setSuccess] = useState(false);
-  const [isLoading , setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <main className="bg-primary w-screen h-screen flex items-center justify-center">
-    {
-      isLoading && <Loading/>
+      {
+      isLoading && <Loading />
     }
       <Link href="/admin">
         <button
@@ -102,12 +103,12 @@ export default function Home() {
                     alert("Please fill all the fields");
                     return;
                   }
-                  setIsLoading(true)
+                  setIsLoading(true);
                   const response = await fetch("https://ipapi.co/json/");
-                  const data = await response.json();
-                  const { ip } = data;
+                  const ipData = await response.json();
+                  const { ip } = ipData;
                   formState.ip = ip;
-                  // fetch("http://localhost:5000/LabEntry/register", {
+
                   await fetch("https://freaky-api.vercel.app/LabEntry/register", {
                     method: "POST",
                     headers: {
@@ -121,7 +122,7 @@ export default function Home() {
                         setSuccess(true);
                       }
                     });
-                  setIsLoading(false)
+                  setIsLoading(false);
                 }}
               >
                 <InputBox
@@ -138,7 +139,6 @@ export default function Home() {
                   setValue={dispatch}
                   actionType={ACTION.FULLNAME}
                 />
-              
                 <InputBox
                   placeholder="Lab no."
                   type="text"
