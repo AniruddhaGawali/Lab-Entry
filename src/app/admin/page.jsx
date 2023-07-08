@@ -52,6 +52,7 @@ function AdminPage() {
       {
         Header: "Name",
         accessor: "fullname",
+        Cell: ({ value }) => value.split(" ").map((v) => v.charAt(0).toUpperCase() + v.slice(1)).join(" "),
       },
       {
         Header: "Lab no.",
@@ -60,6 +61,7 @@ function AdminPage() {
       {
         Header: "Pc no.",
         accessor: "pcno",
+        Cell: ({ value }) => (value.length > 0 ? value : "N/A"),
       },
       {
         Header: "Subject",
@@ -72,10 +74,17 @@ function AdminPage() {
       {
         Header: "Section",
         accessor: "section",
+        Cell: ({ value }) => value.toUpperCase(),
       },
       {
         Header: "Date",
         accessor: "createdAt",
+        Cell: ({ value }) => {
+          const date = new Date(value);
+          const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+          const formattedTime = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
+          return `${formattedDate} - ${formattedTime}`;
+        },
       },
       {
         Header: "IP Address",
@@ -123,19 +132,19 @@ function AdminPage() {
       },
     });
     const resultData = await result.json();
-    let data = resultData.data;
-    data = data.map((d) => {
-      const createdAt = new Date(d.createdAt);
-      
-      return {
-        ...d,
-        createdAt: createdAt.getDate() + "-" + (createdAt.getMonth() + 1) + "-" + createdAt.getFullYear() + " " + createdAt.getHours() + ":" + createdAt.getMinutes() + ":" + createdAt.getSeconds(),
-      };
-    });
+    // eslint-disable-next-line no-shadow
+    const { data } = resultData;
+    // data = data.map((d) => {
+    //   const createdAt = new Date(d.createdAt);
+    //   return {
+    //     ...d,
+    // eslint-disable-next-line max-len
+    //     createdAt: `${createdAt.getDate()}-${createdAt.getMonth() + 1}-${createdAt.getFullYear()} ${createdAt.getHours()}:${createdAt.getMinutes()}:${createdAt.getSeconds()}`,
+    //   };
+    // });
     setOriginalData(data);
     setFilteredData(data);
   }
-  
 
   useEffect(() => {
     fetchData();
@@ -148,21 +157,19 @@ function AdminPage() {
       const pcno = d.pcno.toString();
 
       if (
-        (filter.uid === "" || uid.includes(filter.uid))
-        && (filter.fullname === "" || d.fullname.includes(filter.fullname))
-        && (filter.labno === "" || d.labno.includes(filter.labno))
-        && (filter.pcno === "" || pcno.includes(filter.pcno))
-        && (filter.subject === "" || d.subject.includes(filter.subject))
-        && (filter.semester === "" || semester.includes(filter.semester))
-        && (filter.section === "" || d.section.includes(filter.section))
-        && (filter.personalLaptop === false
-        || d.personal_laptop === filter.personalLaptop)
+        (filter.uid === "" || uid.includes(filter.uid.toLowerCase()))
+        && (filter.fullname === "" || d.fullname.toLowerCase().includes(filter.fullname.toLowerCase()))
+        && (filter.labno === "" || d.labno.toLowerCase().includes(filter.labno.toLowerCase()))
+        && (filter.pcno === "" || pcno.toLowerCase().includes(filter.pcno.toLowerCase()))
+        && (filter.subject === "" || d.subject.toLowerCase().includes(filter.subject.toLowerCase()))
+        && (filter.semester === "" || semester.toLowerCase().includes(filter.semester.toLowerCase()))
+        && (filter.section === "" || d.section.toLowerCase().includes(filter.section.toLowerCase()))
+        && (d.personalLaptop === filter.personalLaptop || filter.personalLaptop === false)
       ) {
         return true;
       }
       return false;
     });
-
     setFilteredData(filtered);
   }, [filter]);
 
@@ -182,7 +189,7 @@ function AdminPage() {
   } = useTable({ columns, data }, usePagination);
 
   if (!isLogin) {
-    return <Login setIsLogin={setIsLogin}/>;
+    return <Login setIsLogin={setIsLogin} />;
   }
 
   return (
