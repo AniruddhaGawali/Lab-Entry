@@ -27,6 +27,7 @@ const ACTION = {
   PERSONALLAPTOP: "personalLaptop",
   SUBJECT: "subject",
   SEMESTER: "semester",
+  DATE: "date",
   SECTION: "section",
 };
 const initialform = {
@@ -37,6 +38,7 @@ const initialform = {
   personalLaptop: false,
   subject: "",
   semester: "",
+  date: "",
   section: "",
 };
 
@@ -110,6 +112,8 @@ function AdminPage() {
         return { ...form, subject: action.payload };
       case ACTION.SEMESTER:
         return { ...form, semester: action.payload };
+      case ACTION.DATE:
+        return { ...form, date: action.payload };
       case ACTION.SECTION:
         return { ...form, section: action.payload };
       default:
@@ -134,14 +138,6 @@ function AdminPage() {
     const resultData = await result.json();
     // eslint-disable-next-line no-shadow
     const { data } = resultData;
-    // data = data.map((d) => {
-    //   const createdAt = new Date(d.createdAt);
-    //   return {
-    //     ...d,
-    // eslint-disable-next-line max-len
-    //     createdAt: `${createdAt.getDate()}-${createdAt.getMonth() + 1}-${createdAt.getFullYear()} ${createdAt.getHours()}:${createdAt.getMinutes()}:${createdAt.getSeconds()}`,
-    //   };
-    // });
     setOriginalData(data);
     setFilteredData(data);
   }
@@ -155,7 +151,9 @@ function AdminPage() {
       const uid = d.uid.toString();
       const semester = d.semester.toString();
       const pcno = d.pcno.toString();
-
+      // eslint-disable-next-line max-len
+      const filterDate = new Date(filter.date);
+      // Assuming the date input value is stored in filter.date
       if (
         (filter.uid === "" || uid.includes(filter.uid.toLowerCase()))
         && (filter.fullname === "" || d.fullname.toLowerCase().includes(filter.fullname.toLowerCase()))
@@ -165,11 +163,14 @@ function AdminPage() {
         && (filter.semester === "" || semester.toLowerCase().includes(filter.semester.toLowerCase()))
         && (filter.section === "" || d.section.toLowerCase().includes(filter.section.toLowerCase()))
         && (d.personalLaptop === filter.personalLaptop || filter.personalLaptop === false)
+        // eslint-disable-next-line max-len
+        && (filter.date === "" || new Date(d.createdAt) >= filterDate) // Compare date values if filter.date is provided
       ) {
         return true;
       }
       return false;
     });
+
     setFilteredData(filtered);
   }, [filter]);
 

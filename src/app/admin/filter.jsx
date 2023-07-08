@@ -12,18 +12,29 @@ const ACTION = {
   PERSONALLAPTOP: "personalLaptop",
   SUBJECT: "subject",
   SEMESTER: "semester",
+  DATE: "date",
   SECTION: "section",
 };
 
 export default function Filter({ isFilter, filter, dispatch }) {
   return (
     <div
-      className={`${
+      className={`overflow-scroll ${
         isFilter ? "w-full md:w-1/3 p-5" : "w-0 p-0"
-      } transition-all duration-700`}
+      } transition-all duration-700 `}
     >
       <h1 className="font-bold  text-3xl  mx-14 text-tertiary">Filter</h1>
-      <div>
+      <br />
+      <div className="">
+        <InputBox
+          label="Date"
+          type="date"
+          placeholder="After Date"
+          value={filter.date}
+          setValue={dispatch}
+          actionType={ACTION.DATE}
+        />
+        <br />
         <InputBox
           label="UID"
           type="number"
@@ -32,7 +43,7 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.UID}
         />
-
+        <br />
         <InputBox
           label="Full Name"
           type="text"
@@ -41,7 +52,7 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.FULLNAME}
         />
-
+        <br />
         <InputBox
           label="lab no."
           type="text"
@@ -50,7 +61,7 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.LABNO}
         />
-
+        <br />
         <InputBox
           label="pc no."
           type="number"
@@ -59,7 +70,7 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.PCNO}
         />
-
+        <br />
         <InputBox
           label="Subject"
           type="text"
@@ -68,14 +79,14 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.SUBJECT}
         />
-
+        <br />
         <CheckBoxInput
           label="Personal Laptop"
           value={filter.personalLaptop}
           setValue={dispatch}
           actionType={ACTION.PERSONALLAPTOP}
         />
-
+        <br />
         <InputBox
           label="Semester"
           type="text"
@@ -84,7 +95,7 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.SEMESTER}
         />
-
+        <br />
         <InputBox
           label="Section"
           type="text"
@@ -93,6 +104,7 @@ export default function Filter({ isFilter, filter, dispatch }) {
           setValue={dispatch}
           actionType={ACTION.SECTION}
         />
+        <br />
       </div>
     </div>
   );

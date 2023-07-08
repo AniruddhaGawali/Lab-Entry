@@ -28,7 +28,7 @@ function InputBox({
             }) : setValue(e.target.value);
         }}
         id={placeholder}
-        className="text-base p-2 rounded-md w-full  focus:ring-2 focus:ring-tertiary focus:outline-none placeholder-black placeholder:text-base placeholder:font-bold disabled:cursor-not-allowed  transition-all duration-300"
+        className="text-base p-2 rounded-md w-full ring-2 ring-primary  focus:ring-2 focus:ring-tertiary focus:outline-none placeholder-black placeholder:text-base placeholder:font-bold disabled:cursor-not-allowed  transition-all duration-300"
         disabled={isDisabled || false}
       />
     </div>
